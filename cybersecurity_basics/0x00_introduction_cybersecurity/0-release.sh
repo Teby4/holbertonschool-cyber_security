@@ -1,3 +1,2 @@
 #!/bin/bash
-echo $DISTRIB_ID
-
+grep "^ID=" /etc/os-release | cut -d '=' -f 2
