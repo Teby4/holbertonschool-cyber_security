@@ -1,3 +1,2 @@
 #!/bin/bash
-lsb_release -a
-
+lsb_release -i | cut -d ':' -f 2 | xargs
