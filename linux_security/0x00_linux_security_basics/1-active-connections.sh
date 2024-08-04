@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo ss -ap
+sudo ss -apt
