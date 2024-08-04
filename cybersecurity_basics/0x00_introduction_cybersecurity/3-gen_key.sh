@@ -1,2 +1,2 @@
 #!/bin/bash
-ssh-keygen -f (\$1|"\$1") -N ¨¨ -t rsa -b 4096
+ssh-keygen -t rsa -b 4096 -f (\$1|"\$1") -N ¨¨
