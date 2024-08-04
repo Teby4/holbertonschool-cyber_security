@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo netstat -apt
+sudo netstat -aplt --verbose
