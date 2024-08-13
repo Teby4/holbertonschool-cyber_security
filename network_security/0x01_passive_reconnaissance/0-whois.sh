@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo whois -r $1 | awk 'BEGIN{/^Tech/ || /^Admin/ || /^Registrant/ print}'
+sudo whois $1 | awk '/^Tech/ || /^Admin/ || /^Registrant/ {gsub(":", " ");print}' > $1.csv
