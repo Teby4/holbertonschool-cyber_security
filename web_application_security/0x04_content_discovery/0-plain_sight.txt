@@ -1,1 +1,1 @@
-/wp-admin, 70e74c8b0bbd423fea32243870efcce8, Wordpress - obsolete version
+/wp-admin, 70e74c8b0bbd423fea32243870efcce8, 6cec5a9c106d45e458fc680f70df91b0
