@@ -1,2 +1,2 @@
 #!/bin/bash
-chmod -R 444 $1
+find $1 -type f -exec chmod 444 {} +
