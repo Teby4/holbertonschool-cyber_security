@@ -1,7 +1,3 @@
-Here’s a revised version of the README without the example output and repository structure:
-
----
-
 # Cryptography Basics Project
 
 This project covers various cryptographic techniques and tools for securing data, password hashing, and cracking password hashes using different methods. The tasks demonstrate practical cryptography skills with Bash scripting, hashing algorithms, and password-cracking tools.
