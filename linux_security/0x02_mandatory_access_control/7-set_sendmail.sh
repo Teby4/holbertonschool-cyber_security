@@ -1,2 +1,2 @@
 #!/bin/bash
-semanage setsebool -p httpd_can_sendmail on
+semanage setsebool -P httpd_can_sendmail on
