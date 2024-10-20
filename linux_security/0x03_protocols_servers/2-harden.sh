@@ -1,2 +1,2 @@
 #!/bin/bash
-find / -xdev -perm 0777 -exec chmod +t {} +
+find / -xdev -type d -perm 0777 -exec chmod +t {} +
