@@ -1,2 +1,4 @@
+#!/usr/bin/env ruby
 def say_hello(str)
-  print("Hello, Holberton! from #{a1}")
+  puts ("Hello, Holberton! from #{str}")
+end
