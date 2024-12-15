@@ -1,13 +1,10 @@
 #!/usr/bin/env ruby
 
 class HelloWorld
-  def initialize
-    @hello = "Hello, World!"
-  end
-  def message(value = "Hello, World!")
-    @hello = value
+  def initialize(value = "Hello, World!"
+    @message = value
   end
   def print_hello
-    print @hello
+    print @message
   end
 end
