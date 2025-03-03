@@ -1,1 +1,1 @@
-Holberton{Presistent_Through_Win_Registrets}
+Holberton{Persist_Through_Win_Registers}
